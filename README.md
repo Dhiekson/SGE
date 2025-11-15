@@ -4,13 +4,13 @@ Bem-vindo ao **SGE (Sistema de Gestão de Estoque)**! Este projeto foi desenvolv
 
 ---
 
-## 📦 Visão Geral
+## Visão Geral
 
 O SGE é um sistema baseado em **ASP.NET WebForms (VB)** integrado com **SQL Server**, oferecendo recursos completos para ambientes corporativos que precisam de organização, segurança e automação no processo logístico.
 
 ---
 
-## 🚀 Funcionalidades Principais
+## Funcionalidades Principais
 
 * **Autenticação de usuários** (login e controle de sessão)
 * **Cadastro de produtos** com categoria, fornecedor e status
@@ -26,7 +26,7 @@ O SGE é um sistema baseado em **ASP.NET WebForms (VB)** integrado com **SQL Ser
 
 ---
 
-## 🏗 Arquitetura do Projeto
+## Arquitetura do Projeto
 
 * **Frontend:** ASPX + JavaScript + CSS
 * **Backend:** VB.NET (WebForms)
@@ -55,7 +55,7 @@ Estrutura principal:
 
 ---
 
-## 🗂 Diagrama Entidade-Relacionamento (ER)
+## Diagrama Entidade-Relacionamento (ER)
 
 Entidades principais:
 
@@ -69,21 +69,21 @@ Entidades principais:
 
 ---
 
-## 🧭 Fluxo Geral do Sistema
+## Fluxo Geral do Sistema
 
 1. Usuário faz login.
-2. É redirecionado para o dashboard.
+2. É redirecionado para os painéis designado.
 3. Dependendo do perfil, acessa:
 
    * **Painel Comprador** (realiza pedidos)
    * **Painel Conferente** (confere e bloqueia produtos)
-   * **Admin** (cadastros gerais)
+
 4. Todas as telas estão integradas ao SQL Server.
 5. Dashboard exibe métricas atualizadas.
 
 ---
 
-## 💾 Banco de Dados
+## Banco de Dados
 
 ### Tabelas principais:
 
@@ -91,8 +91,8 @@ Entidades principais:
 * `fornecedores`
 * `categorias`
 * `usuarios`
-* `pedidos`
-* `pedido_itens`
+* `funcoes`
+* `compras`
 * `status`
 
 ---
@@ -127,7 +127,7 @@ Clique em **Start** ou pressione **F5**.
 
 ---
 
-## 🧪 Testes
+## Testes
 
 * Login
 * Cadastro CRUD
@@ -136,7 +136,7 @@ Clique em **Start** ou pressione **F5**.
 
 ---
 
-## 📌 Requisitos
+## Requisitos
 
 * Windows + IIS Express
 * Visual Studio 2010 ou superior
@@ -144,19 +144,19 @@ Clique em **Start** ou pressione **F5**.
 
 ---
 
-## 🤝 Contribuição
+## Contribuição
 
 Contribuições são bem-vindas!
 Abra um Pull Request ou Issue no repositório.
 
 ---
 
-## 📄 Licença
+## Licença
 
 Este projeto é privado e não possui licença aberta.
 
 ---
 
-## 👨‍💻 Autor
+## Autor
 
 **Dhiekson Nunes** — Desenvolvedor do SGE
