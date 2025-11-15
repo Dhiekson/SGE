@@ -24,6 +24,8 @@ Public Class Login
 
             If ds.Tables(0).Rows.Count > 0 Then
                 ' Armazena informações do usuário na sessão
+                Session("descricaoFuncao") = ds.Tables(0).Rows(0)("perfilUsuario")
+
                 Session("idUsuario") = ds.Tables(0).Rows(0)("idUsuario")
                 Session("nomeUsuario") = ds.Tables(0).Rows(0)("nomeUsuario")
                 Session("perfilUsuario") = ds.Tables(0).Rows(0)("perfilUsuario")

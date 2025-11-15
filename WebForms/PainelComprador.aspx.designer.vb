@@ -50,6 +50,15 @@ Partial Public Class PainelComprador
     Protected WithEvents lblFuncao As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
+    '''lblMensagem control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblMensagem As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
     '''btnSair control.
     '''</summary>
     '''<remarks>

@@ -93,4 +93,13 @@ Partial Public Class CadastroUsuario
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnSalvar As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
+    '''btnVoltar control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnVoltar As Global.System.Web.UI.WebControls.Button
 End Class

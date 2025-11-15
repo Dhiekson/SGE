@@ -4,89 +4,232 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Estoque - SGE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
-        body { font-family: Arial, sans-serif; background:#f4f7fb; padding:20px; }
-        h1 { color:#1976d2; margin:0; }
-        .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; gap:8px; flex-wrap:wrap; }
-        .top input[type=text] { padding:6px 10px; border-radius:6px; border:1px solid #ccc; font-size:13px; }
-        .top button { padding:6px 12px; border-radius:6px; border:none; background:#1976d2; color:#fff; cursor:pointer; }
-        .top button:hover { background:#0f5cae; }
+        
+        body {
+            font-family: 'Inter','Segoe UI',Arial,sans-serif;
+            background: linear-gradient(135deg,#f5f7fa,#e6eefb);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
 
-        .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:12px; margin-bottom:20px; }
-        .card { background:#fff; padding:15px; border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,0.1); text-align:center; cursor:pointer; }
-        .card:hover { box-shadow:0 5px 12px rgba(0,0,0,0.2); }
-        .card .title { font-size:13px; color:#666; margin-bottom:6px; }
-        .card .value { font-size:18px; font-weight:700; color:#222; }
+        /* HEADER ESCURO FIXO */
+        .header {
+            background: #1f2937;
+            color: #fff;
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-        table { width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 3px 6px rgba(0,0,0,0.1); margin-bottom:20px; }
-        th, td { padding:10px; text-align:left; border-bottom:1px solid #eee; }
-        th { background:#1976d2; color:#fff; }
-        .right { text-align:right; }
-        .low-stock td { font-weight:700; color:#856404; background:#fff3cd; }
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
 
-        #panelLowStock { display:none; margin-top:10px; }
+        .header button {
+            background: linear-gradient(135deg,#2563eb,#1d4ed8);
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-        @media(max-width:700px){ .top{flex-direction:column; align-items:flex-start;} }
+        .header button:hover {
+            opacity: 0.95;
+        }
+
+        /* CONTAINER CENTRAL */
+        .container {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 0 20px 40px 20px;
+        }
+
+        /* CAMPO DE BUSCA */
+        .search-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 22px;
+        }
+
+        .search-bar input {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            width: 260px;
+            transition: border 0.2s;
+        }
+
+        .search-bar input:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+
+        /* CARDS KPI */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card .title {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .card .value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 6px;
+            color: #111827;
+        }
+
+        /* TÍTULOS DE SEÇÃO */
+        h2 {
+            color: #111827;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 25px 0 14px;
+        }
+
+        /* TABELA */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        th {
+            background: #2563eb;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        tr:hover td {
+            background: #f9fbff;
+        }
+
+        .low-stock td {
+            background: #fff3cd !important;
+            color: #856404 !important;
+            font-weight: 600;
+        }
+
+        #panelLowStock {
+            display: none;
+            margin-top: 28px;
+        }
+
+        footer {
+            text-align: center;
+            color: #383838;
+            font-size: 14px;
+            padding: 15px 0;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
-        <div class="top">
-            <h1>Estoque Atual</h1>
-            <div>
-                <input type="text" id="txtBusca" placeholder="Buscar por nome ou código" onkeyup="filtrar()" />
-                <button type="button" onclick="window.location.href='Dashboard.aspx'">
-                    <i class="fa fa-arrow-left"></i> Voltar
-                </button>
-            </div>
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📦 Estoque — SGE</h1>
+            <button type="button" onclick="window.location.href='Dashboard.aspx'">
+                <i class="fa fa-arrow-left"></i> Voltar
+            </button>
         </div>
 
-        <!-- Cards de resumo -->
-        <div class="cards">
-            <div class="card">
-                <div class="title">Quantidade Total</div>
-                <div class="value">
-                    <asp:Literal ID="litTotalQuantidade" runat="server"></asp:Literal>
-                </div>
+        <!-- CONTEÚDO -->
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" id="txtBusca" placeholder="Buscar por nome ou código..." onkeyup="filtrar()" />
             </div>
-            <div class="card">
-                <div class="title">Valor Total do Estoque</div>
-                <div class="value">
-                    <asp:Literal ID="litTotalValor" runat="server"></asp:Literal>
-                </div>
-            </div>
-            <div class="card" onclick="toggleLowStock()">
-                <div class="title">Produtos com Estoque Baixo (&lt;=5)</div>
-                <div class="value">
-                    <asp:Literal ID="litLowStockCount" runat="server"></asp:Literal>
-                </div>
-            </div>
-        </div>
 
-        <!-- Estoque completo -->
-        <h2>Estoque Completo</h2>
-        <asp:GridView ID="gvEstoque" runat="server" AutoGenerateColumns="False" EmptyDataText="Nenhum produto encontrado">
-            <Columns>
-                <asp:BoundField DataField="nomeProduto" HeaderText="Produto" />
-                <asp:BoundField DataField="codBarra" HeaderText="Código de Barras" />
-                <asp:BoundField DataField="quantidadeRecebida" HeaderText="Quantidade Recebida" DataFormatString="{0:N0}" />
-                <asp:BoundField DataField="precoUnitario" HeaderText="Preço Unitário" DataFormatString="R$ {0:N2}" />
-                <asp:BoundField DataField="valorTotal" HeaderText="Valor Total" DataFormatString="R$ {0:N2}" />
-            </Columns>
-        </asp:GridView>
+            <!-- CARDS -->
+            <div class="cards">
+                <div class="card">
+                    <div class="title">Quantidade Total</div>
+                    <div class="value"><asp:Literal ID="litTotalQuantidade" runat="server"></asp:Literal></div>
+                </div>
+                <div class="card">
+                    <div class="title">Valor Total do Estoque</div>
+                    <div class="value"><asp:Literal ID="litTotalValor" runat="server"></asp:Literal></div>
+                </div>
+                <div class="card" style="cursor:pointer;" onclick="toggleLowStock()">
+                    <div class="title">Produtos com Estoque Baixo (≤ 5)</div>
+                    <div class="value"><asp:Literal ID="litLowStockCount" runat="server"></asp:Literal></div>
+                </div>
+            </div>
 
-        <!-- Painel produtos com estoque baixo -->
-        <div id="panelLowStock">
-            <h2>Produtos com Estoque Baixo</h2>
-            <asp:GridView ID="gvLowStock" runat="server" AutoGenerateColumns="False" EmptyDataText="Nenhum produto com estoque baixo" CssClass="low-stock">
+            <!-- TABELA PRINCIPAL -->
+            <h2>Estoque Completo</h2>
+            <asp:GridView ID="gvEstoque" runat="server" AutoGenerateColumns="False" EmptyDataText="Nenhum produto encontrado">
                 <Columns>
                     <asp:BoundField DataField="nomeProduto" HeaderText="Produto" />
                     <asp:BoundField DataField="codBarra" HeaderText="Código de Barras" />
-                    <asp:BoundField DataField="quantidadeRecebida" HeaderText="Quantidade" DataFormatString="{0:N0}" />
+                    <asp:BoundField DataField="quantidadeRecebida" HeaderText="Quantidade Recebida" DataFormatString="{0:N0}" />
+                    <asp:BoundField DataField="precoUnitario" HeaderText="Preço Unitário" DataFormatString="R$ {0:N2}" />
+                    <asp:BoundField DataField="valorTotal" HeaderText="Valor Total" DataFormatString="R$ {0:N2}" />
                 </Columns>
             </asp:GridView>
+
+            <!-- ESTOQUE BAIXO -->
+            <div id="panelLowStock">
+                <h2>Produtos com Estoque Baixo</h2>
+                <asp:GridView ID="gvLowStock" runat="server" AutoGenerateColumns="False" EmptyDataText="Nenhum produto com estoque baixo" CssClass="low-stock">
+                    <Columns>
+                        <asp:BoundField DataField="nomeProduto" HeaderText="Produto" />
+                        <asp:BoundField DataField="codBarra" HeaderText="Código de Barras" />
+                        <asp:BoundField DataField="quantidadeRecebida" HeaderText="Quantidade" DataFormatString="{0:N0}" />
+                    </Columns>
+                </asp:GridView>
+            </div>
         </div>
+
+        <footer>© <%: DateTime.Now.Year %> Sistema de Gestão de Estoque — Todos os direitos reservados.</footer>
     </form>
 
     <script type="text/javascript">

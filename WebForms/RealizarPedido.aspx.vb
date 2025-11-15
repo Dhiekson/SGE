@@ -78,11 +78,15 @@ Partial Public Class WebForms_RealizarPedido
 
 
     ' === GRID ===
-    Private Sub CarregarPedidos()
+   Private Sub CarregarPedidos()
         Try
-            Dim idUsuario As Integer = CInt(Session("idUsuario")) ' pega o comprador logado
+            Dim idUsuario As Integer = CInt(Session("idUsuario")) ' comprador logado
 
-            Dim sql As String = "SELECT c.idCompra, f.nomeFornecedor, p.nomeProduto, c.quantidadeComprada, c.valorCompra, c.idStatus " &
+            Dim sql As String = "SELECT c.idCompra, f.nomeFornecedor, p.nomeProduto, " &
+                                "c.quantidadeComprada, " &
+                                "ISNULL(c.quantidadeRecebida, c.quantidadeComprada) AS quantidadeRecebida, " &
+                                "CAST(c.valorCompra AS DECIMAL(18,2)) AS valorAtualizado, " &
+                                "c.idStatus " &
                                 "FROM compras c " &
                                 "INNER JOIN fornecedores f ON c.idFornecedor = f.idFornecedor " &
                                 "INNER JOIN produtos p ON c.idProduto = p.idProduto " &
@@ -101,6 +105,7 @@ Partial Public Class WebForms_RealizarPedido
             MostrarMensagem("Erro ao carregar pedidos: " & ex.Message, False)
         End Try
     End Sub
+
 
     Private Sub CarregarProdutosFiltrados()
         Dim sql As String = "SELECT idProduto, nomeProduto FROM produtos WHERE 1=1"
@@ -232,29 +237,68 @@ Partial Public Class WebForms_RealizarPedido
 
     ' === SELECIONAR LINHA ===
     Protected Sub gvPedidos_SelectedIndexChanged(sender As Object, e As EventArgs)
-        Dim idCompra As Integer = CInt(gvPedidos.SelectedDataKey.Value)
-        Dim sql As String = "SELECT c.*, f.idFornecedor, p.idProduto, p.precoUnitario " &
-                            "FROM compras c " &
-                            "INNER JOIN fornecedores f ON c.idFornecedor = f.idFornecedor " &
-                            "INNER JOIN produtos p ON c.idProduto = p.idProduto " &
-                            "WHERE c.idCompra = @id"
-        Dim param As SqlParameter() = {New SqlParameter("@id", idCompra)}
-        Dim ds As DataSet = cn.ExecutaSqlRetornoParam(sql, param)
+        Try
+            ' Obtém o ID da compra selecionada
+            Dim idCompra As Integer = CInt(gvPedidos.SelectedDataKey.Value)
 
-        If ds.Tables(0).Rows.Count > 0 Then
-            Dim row = ds.Tables(0).Rows(0)
-            ddlFornecedor.SelectedValue = row("idFornecedor").ToString()
-            ddlCategoria.SelectedValue = row("idCategoria").ToString()
-            ddlProduto.SelectedValue = row("idProduto").ToString()
-            txtQuantidade.Text = row("quantidadeComprada").ToString()
-            txtValorUnitario.Text = CDec(row("precoUnitario")).ToString("0.00")
-            lblValorTotal.Text = "Valor Total: R$ " & (CDec(row("quantidadeComprada")) * CDec(row("precoUnitario"))).ToString("0.00")
-        End If
+            ' Consulta completa para buscar os detalhes da compra
+            Dim sql As String = "SELECT c.idCompra, c.quantidadeComprada, c.valorCompra, " &
+                                "f.idFornecedor, p.idProduto, p.precoUnitario, p.idCategoria, c.idStatus " &
+                                "FROM compras c " &
+                                "INNER JOIN fornecedores f ON c.idFornecedor = f.idFornecedor " &
+                                "INNER JOIN produtos p ON c.idProduto = p.idProduto " &
+                                "WHERE c.idCompra = @id"
 
-        ' Bloquear outros botões
-        EmEdicao = True
-        AlterarEstadoBotoes(False)
+            Dim param As SqlParameter() = {New SqlParameter("@id", idCompra)}
+            Dim ds As DataSet = cn.ExecutaSqlRetornoParam(sql, param)
+
+            If ds.Tables(0).Rows.Count > 0 Then
+                Dim row = ds.Tables(0).Rows(0)
+                Dim idStatus As Integer = CInt(row("idStatus"))
+
+                ' ⚠️ Verifica se o status é "Conferido" (idStatus = 2)
+                If idStatus = 2 Then
+                    MostrarMensagem("Este pedido já foi conferido e não pode ser editado.", False)
+                    gvPedidos.SelectedIndex = -1
+                    Exit Sub
+                End If
+
+                ' Preenche o fornecedor
+                ddlFornecedor.SelectedValue = row("idFornecedor").ToString()
+
+                ' Recarrega categorias e produtos
+                CarregarCategorias()
+                Dim idCategoria As String = row("idCategoria").ToString()
+                If ddlCategoria.Items.FindByValue(idCategoria) IsNot Nothing Then
+                    ddlCategoria.SelectedValue = idCategoria
+                End If
+
+                CarregarProdutos()
+                Dim idProduto As String = row("idProduto").ToString()
+                If ddlProduto.Items.FindByValue(idProduto) IsNot Nothing Then
+                    ddlProduto.SelectedValue = idProduto
+                End If
+
+                ' Quantidade e valor
+                txtQuantidade.Text = row("quantidadeComprada").ToString()
+                txtValorUnitario.Text = CDec(row("precoUnitario")).ToString("0.00")
+
+                ' Calcula valor total
+                Dim total As Decimal = CDec(row("quantidadeComprada")) * CDec(row("precoUnitario"))
+                lblValorTotal.Text = "Valor Total: R$ " & total.ToString("0.00")
+
+                ' Ativa modo de edição
+                EmEdicao = True
+                AlterarEstadoBotoes(False)
+            End If
+
+
+        Catch ex As Exception
+            MostrarMensagem("Erro ao carregar pedido selecionado: " & ex.Message, False)
+        End Try
     End Sub
+
+
 
     ' === ALTERAÇÃO AUTOMÁTICA DE PRODUTO ===
     Protected Sub ddlProduto_SelectedIndexChanged(sender As Object, e As EventArgs)
@@ -331,7 +375,7 @@ Partial Public Class WebForms_RealizarPedido
     Private Sub MostrarMensagem(msg As String, sucesso As Boolean)
         lblMensagem.Text = msg
         lblMensagem.CssClass = If(sucesso, "mensagem sucesso", "mensagem erro")
-        Dim script As String = "setTimeout(function(){document.getElementById('" & lblMensagem.ClientID & "').innerText='';},3000);"
+        Dim script As String = "setTimeout(function(){document.getElementById('" & lblMensagem.ClientID & "').innerText='';},2000);"
         ScriptManager.RegisterStartupScript(Me, Me.GetType(), "HideMsg", script, True)
     End Sub
 

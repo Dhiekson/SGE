@@ -54,4 +54,5 @@ Partial Class Estoque
 
         litLowStockCount.Text = If(dsLow IsNot Nothing AndAlso dsLow.Tables.Count > 0, dsLow.Tables(0).Rows.Count.ToString(), "0")
     End Sub
+
 End Class

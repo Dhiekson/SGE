@@ -15,7 +15,12 @@ Public Class MeusPedidos
             Dim idUsuario As Integer = CInt(Session("idUsuario"))
             Dim cn As New Conexao()
 
-            Dim sql As String = "SELECT c.idCompra, p.nomeProduto, f.nomeFornecedor, c.quantidadeComprada, c.valorCompra, " &
+            ' SELECT: retorna quantidadeRecebida como fallback para quantidadeComprada,
+            ' e valorAtualizado como o valor atual presente na tabela (conferente já pode ter alterado).
+            Dim sql As String = "SELECT c.idCompra, p.nomeProduto, f.nomeFornecedor, " &
+                                "c.quantidadeComprada, " &
+                                "ISNULL(c.quantidadeRecebida, c.quantidadeComprada) AS quantidadeRecebida, " &
+                                "CAST(c.valorCompra AS DECIMAL(18,2)) AS valorAtualizado, " &
                                 "s.descricaoStatus, u.nomeUsuario AS nomeConferente " &
                                 "FROM compras c " &
                                 "INNER JOIN produtos p ON c.idProduto = p.idProduto " &
@@ -29,7 +34,8 @@ Public Class MeusPedidos
                 New SqlParameter("@idUsuario", idUsuario)
             }
 
-            gvPedidos.DataSource = cn.ExecutaSqlRetornoParam(sql, parametros)
+            Dim ds As DataSet = cn.ExecutaSqlRetornoParam(sql, parametros)
+            gvPedidos.DataSource = ds
             gvPedidos.DataBind()
 
         Catch ex As Exception
@@ -43,7 +49,12 @@ Public Class MeusPedidos
         Response.Redirect("PainelComprador.aspx")
     End Sub
 
-    ' Evento do botão Desfazer
+    ' Força atualização quando clicar em Atualizar
+    Protected Sub btnRefresh_Click(sender As Object, e As EventArgs)
+        CarregarPedidos()
+    End Sub
+
+    ' Evento do botão Desfazer (apaga compra)
     Protected Sub gvPedidos_RowCommand(sender As Object, e As GridViewCommandEventArgs)
         If e.CommandName = "Desfazer" Then
             Dim idCompra As Integer = CInt(e.CommandArgument)

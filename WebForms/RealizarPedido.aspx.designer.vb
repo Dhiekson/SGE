@@ -32,6 +32,15 @@ Partial Public Class WebForms_RealizarPedido
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
 
     '''<summary>
+    '''btnVoltar control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnVoltar As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
     '''lblMensagem control.
     '''</summary>
     '''<remarks>
@@ -120,15 +129,6 @@ Partial Public Class WebForms_RealizarPedido
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnCancelar As Global.System.Web.UI.WebControls.Button
-
-    '''<summary>
-    '''btnVoltar control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnVoltar As Global.System.Web.UI.WebControls.Button
 
     '''<summary>
     '''gvPedidos control.

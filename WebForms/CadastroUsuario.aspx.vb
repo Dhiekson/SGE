@@ -10,7 +10,7 @@ Public Class CadastroUsuario
             ddlFuncao.DataTextField = "nomeFuncao"
             ddlFuncao.DataValueField = "idFuncao"
             ddlFuncao.DataBind()
-            ddlFuncao.Items.Insert(0, New ListItem("--Selecione--", "-1"))
+
         End If
     End Sub
 
@@ -21,7 +21,7 @@ Public Class CadastroUsuario
         Dim email As String = txtEmail.Text.Trim()
         Dim idFuncao As Integer = CInt(ddlFuncao.SelectedValue)
 
-        ' Validações básicas
+        ' 🧩 Validações básicas
         If nome = "" Or senha = "" Or confirmarSenha = "" Or idFuncao = -1 Then
             lblMensagem.CssClass = "mensagem erro"
             lblMensagem.Text = "Preencha todos os campos obrigatórios."
@@ -34,26 +34,54 @@ Public Class CadastroUsuario
             Return
         End If
 
-        ' Inserindo no banco
         Dim cn As New Conexao()
-        Dim sql As String = "INSERT INTO usuarios (nomeUsuario, senhaUsuario, perfilUsuario, email, idFuncao) " &
-                            "VALUES (@nome, @senha, @perfil, @email, @idFuncao)"
-        Dim perfil As String = ddlFuncao.SelectedItem.Text
-        Dim parametros() As SqlParameter = {
-            New SqlParameter("@nome", nome),
-            New SqlParameter("@senha", senha),
-            New SqlParameter("@perfil", perfil),
-            New SqlParameter("@email", email),
-            New SqlParameter("@idFuncao", idFuncao)
-        }
 
         Try
+            ' 🔍 Verifica se já existe um usuário com o mesmo nome
+            Dim verificaSql As String = "SELECT COUNT(*) FROM usuarios WHERE nomeUsuario = @nome"
+            Dim parametrosVerifica() As SqlParameter = {
+                New SqlParameter("@nome", nome)
+            }
+
+            Dim dsVerifica = cn.ExecutaSqlRetornoParam(verificaSql, parametrosVerifica)
+            Dim jaExiste As Integer = CInt(dsVerifica.Tables(0).Rows(0)(0))
+
+            If jaExiste > 0 Then
+                lblMensagem.CssClass = "mensagem erro"
+                lblMensagem.Text = "Já existe um usuário com esse nome. Escolha outro."
+                Return
+            End If
+
+            ' 💾 Insere novo usuário
+            Dim sql As String = "INSERT INTO usuarios (nomeUsuario, senhaUsuario, perfilUsuario, email, idFuncao) " &
+                                "VALUES (@nome, @senha, @perfil, @email, @idFuncao)"
+
+            Dim perfil As String = ddlFuncao.SelectedItem.Text
+            Dim parametros() As SqlParameter = {
+                New SqlParameter("@nome", nome),
+                New SqlParameter("@senha", senha),
+                New SqlParameter("@perfil", perfil),
+                New SqlParameter("@email", email),
+                New SqlParameter("@idFuncao", idFuncao)
+            }
+
             cn.ExecutaSqlComandoParam(sql, parametros)
-            ' Redireciona para a tela de login após sucesso
+
+            lblMensagem.CssClass = "mensagem sucesso"
+            lblMensagem.Text = "Usuário cadastrado com sucesso! Você será redirecionado para o login."
+
+            ' ⏳ Redireciona
             Response.Redirect("~/WebForms/Login.aspx")
+
+
         Catch ex As Exception
             lblMensagem.CssClass = "mensagem erro"
             lblMensagem.Text = "Erro ao cadastrar: " & ex.Message
         End Try
+    End Sub
+
+    Protected Sub btnVoltar_Click(sender As Object, e As EventArgs)
+        Response.Redirect("Login.aspx")
+
     End Sub
 End Class

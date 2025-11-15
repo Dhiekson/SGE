@@ -32,15 +32,6 @@ Partial Public Class CadastroFornecedor
     Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
 
     '''<summary>
-    '''txtID control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtID As Global.System.Web.UI.WebControls.TextBox
-
-    '''<summary>
     '''btnVoltar control.
     '''</summary>
     '''<remarks>
@@ -48,6 +39,15 @@ Partial Public Class CadastroFornecedor
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnVoltar As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
+    '''txtID control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtID As Global.System.Web.UI.WebControls.TextBox
 
     '''<summary>
     '''lblMensagem control.

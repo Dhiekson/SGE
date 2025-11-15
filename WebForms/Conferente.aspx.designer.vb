@@ -86,15 +86,6 @@ Partial Public Class Conferente
     Protected WithEvents TimerPedidos As Global.System.Web.UI.Timer
 
     '''<summary>
-    '''painelConferencia control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents painelConferencia As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-
-    '''<summary>
     '''hfIdPedido control.
     '''</summary>
     '''<remarks>

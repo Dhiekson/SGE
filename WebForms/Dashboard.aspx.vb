@@ -78,19 +78,24 @@ Partial Class Dashboard
             .maiorCompraStr = "R$ " & maiorCompra.ToString("N2"),
             .atualizadoEm = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
         }
+        ' Evolução por mês 
+        Dim sqlEvol As String = "SELECT YEAR(c.dataCompra) AS ano, MONTH(c.dataCompra) AS mes, COUNT(*) AS qtd " &
+                                "FROM compras c " &
+                                "WHERE " & filtroPeriodo & filtroComprador & " " &
+                                "GROUP BY YEAR(c.dataCompra), MONTH(c.dataCompra) " &
+                                "ORDER BY ano, mes"
 
-        ' Evolução por dia
-        Dim sqlEvol As String = "SELECT CAST(c.dataCompra AS DATE) AS dia, COUNT(*) AS qtd FROM compras c " &
-                                "WHERE " & filtroPeriodo & filtroComprador & " GROUP BY CAST(c.dataCompra AS DATE) ORDER BY dia"
         Dim dsEvol As DataSet = cn.ExecutaSqlRetorno(sqlEvol)
         Dim evolLabels As New List(Of String)
         Dim evolData As New List(Of Integer)
         If dsEvol IsNot Nothing AndAlso dsEvol.Tables.Count > 0 Then
             For Each r As DataRow In dsEvol.Tables(0).Rows
-                evolLabels.Add(Convert.ToDateTime(r("dia")).ToString("dd/MM"))
+                Dim label As String = r("mes").ToString.PadLeft(2, "0"c) & "/" & r("ano").ToString
+                evolLabels.Add(label)
                 evolData.Add(Convert.ToInt32(r("qtd")))
             Next
         End If
+
 
         ' Fornecedores
         Dim sqlFornecedores As String = "SELECT f.nomeFornecedor, SUM(c.valorCompra) AS totalValor FROM compras c " &
@@ -160,6 +165,31 @@ Partial Class Dashboard
             Key .recebidos = recebidos,
             Key .devolvidos = New List(Of Object)()
         }
+    End Function
+
+    <WebMethod()>
+    Public Shared Function GetFornecedores() As Object
+        Dim cn As New Conexao()
+        Dim sql As String =
+            "SELECT idFornecedor, nomeFornecedor, CNPJ, email " &
+            "FROM fornecedores " &
+            "ORDER BY nomeFornecedor"
+
+        Dim ds As DataSet = cn.ExecutaSqlRetorno(sql)
+        Dim lista As New List(Of Object)
+
+        If ds IsNot Nothing AndAlso ds.Tables.Count > 0 Then
+            For Each r As DataRow In ds.Tables(0).Rows
+                lista.Add(New With {
+                    .idFornecedor = r("idFornecedor").ToString(),
+                    .NomeFornecedor = r("nomeFornecedor").ToString(),
+                    .CNPJ = r("CNPJ").ToString(),
+                    .Email = r("email").ToString()
+                })
+            Next
+        End If
+
+        Return lista
     End Function
 
 End Class

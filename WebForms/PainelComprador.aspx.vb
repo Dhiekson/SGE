@@ -1,5 +1,4 @@
-﻿Imports System.Data
-Imports System.Data.SqlClient
+﻿Imports System.Data.SqlClient
 
 Public Class PainelComprador
     Inherits System.Web.UI.Page
@@ -7,50 +6,52 @@ Public Class PainelComprador
     Private cn As New Conexao()
 
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
-        ' Verifica se o usuário está logado e é comprador
-        If Session("perfilUsuario") Is Nothing OrElse Session("perfilUsuario").ToString() <> "Comprador" Then
-            Response.Redirect("~/WebForms/Login.aspx")
-        End If
-
         If Not IsPostBack Then
-            CarregarUsuarioNaTela()
+            CarregarDadosUsuario()
             CarregarPedidos()
         End If
     End Sub
 
-    ' Exibe nome e função do usuário logado
-    Private Sub CarregarUsuarioNaTela()
-        Dim nome As String = If(TryCast(Session("nomeUsuario"), String), "Desconhecido")
-        Dim funcao As String = If(TryCast(Session("perfilUsuario"), String), "Sem Função")
-
-        lblUsuario.Text = "Usuário: " & nome
-        lblFuncao.Text = "Função: " & funcao
+    Private Sub CarregarDadosUsuario()
+        Try
+            If Session("nomeUsuario") IsNot Nothing Then
+                lblUsuario.Text = "Usuário: " & Session("nomeUsuario").ToString()
+                lblFuncao.Text = "Função: " & Session("descricaoFuncao").ToString()
+            Else
+                Response.Redirect("Login.aspx")
+            End If
+        Catch ex As Exception
+            lblErro.Text = "Erro ao carregar informações do usuário: " & ex.Message
+        End Try
     End Sub
 
-
-    ' Carrega pedidos do comprador
-    Protected Sub CarregarPedidos()
+    Private Sub CarregarPedidos()
         Try
-            Dim idUsuario As Long = CLng(Session("idUsuario"))
+            Dim idUsuario As Integer = CInt(Session("idUsuario"))
 
+            ' === Ajuste principal aqui ===
+            ' Se a quantidadeRecebida for diferente de NULL, exibir ela.
+            ' Caso contrário, mostrar quantidadeComprada normalmente.
+            ' ValorCompra já vem atualizado após conferência.
             Dim sql As String =
                 "SELECT c.idCompra, c.dataCompra, p.nomeProduto, f.nomeFornecedor, " &
-                "c.quantidadeComprada, c.valorCompra, c.observacoes, " &
-                "ISNULL(s.descricaoStatus, 'Pendente') AS descricaoStatus, " &
-                "ISNULL(u.nomeUsuario, 'Não conferido') AS nomeConferente " &
+                "ISNULL(c.quantidadeRecebida, c.quantidadeComprada) AS quantidadeComprada, s.idStatus, s.descricaoStatus, " &
+                "CAST(c.valorCompra AS DECIMAL(18,2)) AS valorCompra, " &
+                "u.nomeUsuario AS nomeConferente, c.observacoes, s.descricaoStatus " &
                 "FROM compras c " &
                 "INNER JOIN produtos p ON c.idProduto = p.idProduto " &
                 "INNER JOIN fornecedores f ON c.idFornecedor = f.idFornecedor " &
-                "LEFT JOIN status s ON c.idStatus = s.idStatus " &
+                "INNER JOIN status s ON c.idStatus = s.idStatus " &
                 "LEFT JOIN usuarios u ON c.idConferente = u.idUsuario " &
                 "WHERE c.idUsuario = @idUsuario " &
-                "ORDER BY c.idCompra DESC"
+                "ORDER BY c.dataCompra DESC"
 
-            Dim parametros As SqlParameter() = {
-                New SqlParameter("@idUsuario", SqlDbType.BigInt) With {.Value = idUsuario}
+            Dim parametros() As SqlParameter = {
+                New SqlParameter("@idUsuario", idUsuario)
             }
 
             Dim ds As DataSet = cn.ExecutaSqlRetornoParam(sql, parametros)
+
             GridViewPedidos.DataSource = ds
             GridViewPedidos.DataBind()
 
@@ -59,44 +60,61 @@ Public Class PainelComprador
         End Try
     End Sub
 
+    Protected Sub btnSair_Click(sender As Object, e As EventArgs)
+        Session.Abandon()
+        Response.Redirect("Login.aspx")
+    End Sub
 
-    ' Mostra o botão "Devolver" apenas se o status for "Devolução"
     Protected Sub GridViewPedidos_RowDataBound(sender As Object, e As GridViewRowEventArgs)
         If e.Row.RowType = DataControlRowType.DataRow Then
-            Dim status As String = DataBinder.Eval(e.Row.DataItem, "descricaoStatus").ToString()
+            ' Pega o idStatus do DataItem
+            Dim drv As DataRowView = CType(e.Row.DataItem, DataRowView)
+            Dim idStatus As Integer = CInt(drv("idStatus"))
+
+            ' Encontra o botão na linha
             Dim btnDevolver As Button = CType(e.Row.FindControl("btnDevolver"), Button)
 
+            ' Botão visível apenas se o status for Devolução (idStatus = 3)
             If btnDevolver IsNot Nothing Then
-                btnDevolver.Visible = (status = "Devolução")
+                btnDevolver.Visible = (idStatus = 3)
             End If
         End If
     End Sub
 
-    ' Exclui o pedido quando clicado em "Devolver"
     Protected Sub btnDevolver_Click(sender As Object, e As EventArgs)
         Dim btn As Button = CType(sender, Button)
-        Dim idCompra As Long = CLng(btn.CommandArgument)
+        Dim idCompra As Integer = CInt(btn.CommandArgument)
 
         Try
-            Dim sql As String = "DELETE FROM compras WHERE idCompra = @idCompra"
-            Dim parametros As SqlParameter() = {
-                New SqlParameter("@idCompra", SqlDbType.BigInt) With {.Value = idCompra}
+            Dim cn As New Conexao()
+            Dim sql As String = "DELETE FROM compras WHERE idCompra = @id"
+            Dim parametros() As SqlParameter = {
+                New SqlParameter("@id", idCompra)
             }
 
             cn.ExecutaSqlComandoParam(sql, parametros)
 
-            CarregarPedidos()
-            ClientScript.RegisterStartupScript(Me.GetType(), "alert", "alert('Pedido devolvido e removido com sucesso!');", True)
+            lblMensagem.CssClass = "mensagem sucesso"
+            lblMensagem.Text = "Pedido excluído com sucesso!"
 
+            ' Atualiza a Grid
+            CarregarPedidos()
         Catch ex As Exception
-            lblErro.Text = "Erro ao devolver pedido: " & ex.Message
+            lblMensagem.CssClass = "mensagem erro"
+            lblMensagem.Text = "Erro ao excluir pedido: " & ex.Message
         End Try
     End Sub
 
-    ' Botão de sair
-    Protected Sub btnSair_Click(sender As Object, e As EventArgs)
-        Session.Clear()
-        Session.Abandon()
-        Response.Redirect("~/WebForms/Login.aspx")
+
+    Protected Sub gvPedidos_RowDataBound(sender As Object, e As GridViewRowEventArgs)
+        If e.Row.RowType = DataControlRowType.DataRow Then
+            Dim idStatus As Integer = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "idStatus"))
+            Dim btnDesfazer As Button = CType(e.Row.FindControl("btnDesfazer"), Button)
+
+            If btnDesfazer IsNot Nothing Then
+                btnDesfazer.Visible = (idStatus <> 3) ' 3 = Devolução
+            End If
+        End If
     End Sub
+
 End Class

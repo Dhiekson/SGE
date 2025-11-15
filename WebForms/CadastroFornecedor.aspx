@@ -7,119 +7,214 @@
     <title>Cadastro de Fornecedores</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7fb;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f7;
             margin: 0;
             padding: 0;
         }
-        .container {
-            width: 80%;
-            max-width: 900px;
-            margin: 40px auto;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 30px;
-        }
-        .top-bar {
+
+        /* ====== TOPO ====== */
+        .header {
+            background-color: #1a237e;
+            color: white;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-        h2 {
-            color: #333;
+
+        .header h1 {
             margin: 0;
+            font-size: 22px;
         }
+
+        /* ====== CONTAINER ====== */
+        .container {
+            width: 90%;
+            max-width: 950px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            padding: 30px 40px;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* ====== FORM ====== */
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         td {
             padding: 10px;
             vertical-align: middle;
         }
+
         input[type="text"], input[type="email"] {
             width: 95%;
-            padding: 8px;
+            padding: 10px;
+            border-radius: 8px;
             border: 1px solid #ccc;
-            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease-in-out;
         }
+
+        input[type="text"]:focus, input[type="email"]:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 6px rgba(0,123,255,0.3);
+        }
+
+        /* ====== BOTÕES ====== */
         .btn {
             border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
+            border-radius: 8px;
+            padding: 10px 18px;
             margin: 6px 4px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            font-weight: bold;
-            color: white;
+            font-weight: 600;
+            color: #fff;
+            transition: background 0.3s, transform 0.1s;
         }
-        .btn:hover { opacity: 0.9; }
-        .btn-primary { background-color: #4CAF50; }
-        .btn-warning { background-color: #ff9800; }
-        .btn-danger { background-color: #f44336; }
-        .btn-voltar { background-color: #607D8B; }
-        .btn-voltar:hover { background-color: #546E7A; }
-        .btn-container { text-align: right; }
-        h3 { margin-top: 40px; color: #333; }
-        .grid-container { overflow-x: auto; margin-top: 10px; }
-        .mensagem {
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        .mensagem.erro { color: red; }
-        .mensagem.sucesso { color: green; }
 
-        /* Campo de busca */
+        .btn:hover {
+            transform: scale(1.03);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #4CAF50, #2E7D32);
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, #ff9800, #e68900);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, #f44336, #d32f2f);
+        }
+
+        .btn-voltar {
+            background: linear-gradient(90deg, #607D8B, #455A64);
+        }
+
+        .btn-search {
+            background: linear-gradient(90deg, #2196F3, #1976D2);
+        }
+
+        .btn-reset {
+            background: linear-gradient(90deg, #9C27B0, #7B1FA2);
+        }
+
+        .btn-container {
+            text-align: right;
+            padding-top: 10px;
+        }
+
+        /* ====== GRID ====== */
+        .tabela-fornecedores {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        .tabela-fornecedores th {
+            background-color: #1a237e;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .tabela-fornecedores td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .tabela-fornecedores tr:nth-child(even) {
+            background-color: #f7f9fc;
+        }
+
+        /* ====== CENTRALIZAÇÃO DOS BOTÕES DE AÇÃO ====== */
+        .tabela-fornecedores td:last-child {
+            text-align: center;
+        }
+
+        .btn-grid {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            margin: 4px 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn-grid:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+        }
+
+        .btn-edit {
+            background: linear-gradient(90deg, #ffb300, #ff8f00);
+        }
+
+        .btn-delete {
+            background: linear-gradient(90deg, #e53935, #c62828);
+        }
+
+        /* ====== BUSCA ====== */
         .search-bar {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 15px;
         }
+
         .search-bar input[type="text"] {
             flex: 1;
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 6px;
         }
-        .btn-search { background-color: #2196F3; }
-        .btn-search:hover { background-color: #1976D2; }
-        .btn-reset { background-color: #9E9E9E; }
-        .btn-reset:hover { background-color: #757575; }
 
-        /* Tabela de fornecedores */
-        .tabela-fornecedores {
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: #fff;
-        }
-        .tabela-fornecedores th {
-            background-color: #e8f5e9;
-            color: #333;
-            text-align: left;
-            padding: 10px;
+        /* ====== MENSAGEM ====== */
+        .mensagem {
+            text-align: center;
             font-weight: bold;
-            border-bottom: 1px solid #ccc;
+            margin: 15px 0;
         }
-        .tabela-fornecedores td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 13px;
-        }
-        .btn-warning { background-color: #ffb300; }
-        .btn-warning:hover { background-color: #ffa000; }
-        .btn-danger { background-color: #e53935; }
-        .btn-danger:hover { background-color: #c62828; }
-    </style>
 
+        .mensagem.sucesso {
+            color: #4CAF50;
+        }
+
+        .mensagem.erro {
+            color: #f44336;
+        }
+
+        /* ====== FOOTER ====== */
+        footer {
+            text-align: center;
+            margin: 30px 0 15px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
     <script type="text/javascript">
         function mascaraCNPJ(campo) {
             let v = campo.value.replace(/\D/g, '');
@@ -133,48 +228,55 @@
 </head>
 <body>
     <form id="form1" runat="server">
+    <div class="header">
+        <h1>
+            SGE - Cadastro de Fornecedores</h1>
+        <asp:Button ID="btnVoltar" runat="server" Text="⮐ Voltar ao Painel" CssClass="btn btn-voltar"
+            OnClick="btnVoltar_Click" />
+    </div>
     <div class="container">
-
-        <!-- ID oculto -->
-        <asp:TextBox ID="txtID" runat="server" style="display:none;"></asp:TextBox>
-
-        <!-- Barra superior -->
-        <div class="top-bar">
-            <h2>Cadastro de Fornecedores</h2>
-            <asp:Button ID="btnVoltar" runat="server" Text="⮐ Voltar ao Painel" CssClass="btn btn-voltar"
-                OnClick="btnVoltar_Click" />
-        </div>
-
+        <asp:TextBox ID="txtID" runat="server" Style="display: none;"></asp:TextBox>
+        <h2>
+            Gerenciar Fornecedores</h2>
         <asp:Label ID="lblMensagem" runat="server" CssClass="mensagem"></asp:Label>
-
-        <!-- Formulário -->
         <table>
             <tr>
-                <td>Nome do Fornecedor:</td>
-                <td><asp:TextBox ID="txtNomeFornecedor" runat="server" /></td>
+                <td>
+                    Nome do Fornecedor:
+                </td>
+                <td>
+                    <asp:TextBox ID="txtNomeFornecedor" runat="server" />
+                </td>
             </tr>
             <tr>
-                <td>CNPJ:</td>
-                <td><asp:TextBox ID="txtCNPJ" runat="server" MaxLength="18" onkeyup="mascaraCNPJ(this)" /></td>
+                <td>
+                    CNPJ:
+                </td>
+                <td>
+                    <asp:TextBox ID="txtCNPJ" runat="server" MaxLength="18" onkeyup="mascaraCNPJ(this)" />
+                </td>
             </tr>
             <tr>
-                <td>Email:</td>
-                <td><asp:TextBox ID="txtEmail" runat="server" /></td>
+                <td>
+                    Email:
+                </td>
+                <td>
+                    <asp:TextBox ID="txtEmail" runat="server" />
+                </td>
             </tr>
             <tr>
                 <td colspan="2" class="btn-container">
                     <asp:Button ID="btnAdicionar" runat="server" Text="Adicionar" CssClass="btn btn-primary"
-                        OnClick="btnAdicionar_Click" BackColor="#009933" />
+                        OnClick="btnAdicionar_Click" />
                     <asp:Button ID="btnAtualizar" runat="server" Text="Atualizar" CssClass="btn btn-warning"
                         OnClick="btnAtualizar_Click" />
-                     <asp:Button ID="btnCancelar" runat="server" Text="Cancelar" CssClass="btn btn-voltar"
-                        OnClick="btnCancelar_Click" BackColor="#CC0000" />
+                    <asp:Button ID="btnCancelar" runat="server" Text="Cancelar" CssClass="btn btn-voltar"
+                        OnClick="btnCancelar_Click" />
                 </td>
             </tr>
         </table>
-
-        <!-- 🔍 Campo de Busca -->
-        <h3>Lista de Fornecedores</h3>
+        <h3>
+            Lista de Fornecedores</h3>
         <div class="search-bar">
             <asp:TextBox ID="txtBuscar" runat="server" placeholder="Buscar por nome ou CNPJ..." />
             <asp:Button ID="btnBuscar" runat="server" Text="🔍 Pesquisar" CssClass="btn btn-search"
@@ -182,34 +284,30 @@
             <asp:Button ID="btnResetar" runat="server" Text="🔄 Limpar Filtro" CssClass="btn btn-reset"
                 OnClick="btnResetar_Click" />
         </div>
-
-        <!-- 🧾 Grid de Fornecedores -->
         <div class="grid-container">
-            <asp:GridView ID="gvFornecedores" runat="server" AutoGenerateColumns="False"
-                DataKeyNames="idFornecedor" CssClass="tabela-fornecedores"
-                OnSelectedIndexChanged="gvFornecedores_SelectedIndexChanged"
+            <asp:GridView ID="gvFornecedores" runat="server" AutoGenerateColumns="False" DataKeyNames="idFornecedor"
+                CssClass="tabela-fornecedores" OnSelectedIndexChanged="gvFornecedores_SelectedIndexChanged"
                 OnRowDeleting="gvFornecedores_RowDeleting">
                 <Columns>
                     <asp:BoundField DataField="idFornecedor" HeaderText="ID" ReadOnly="True" />
                     <asp:BoundField DataField="nomeFornecedor" HeaderText="Nome" />
                     <asp:BoundField DataField="CNPJ" HeaderText="CNPJ" />
                     <asp:BoundField DataField="email" HeaderText="Email" />
-
                     <asp:TemplateField HeaderText="Ações">
                         <ItemTemplate>
-                            <asp:Button ID="btnEditar" runat="server" Text="Editar"
-                                CssClass="btn btn-warning btn-sm"
+                            <asp:Button ID="btnEditar" runat="server" Text="Editar" CssClass="btn-grid btn-edit"
                                 CommandName="Select" />
-                            <asp:Button ID="btnExcluir" runat="server" Text="Excluir"
-                                CssClass="btn btn-danger btn-sm"
-                                CommandName="Delete"
-                                OnClientClick="return confirm('Tem certeza que deseja excluir este fornecedor?');" />
+                            <asp:Button ID="btnExcluir" runat="server" Text="Excluir" CssClass="btn-grid btn-delete"
+                                CommandName="Delete" OnClientClick="return confirm('Tem certeza que deseja excluir este fornecedor?');" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
         </div>
     </div>
+    <footer>
+            © 2025 SGE - Sistema de Gestão de Estoque.
+        </footer>
     </form>
 </body>
 </html>
